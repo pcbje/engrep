@@ -11,7 +11,7 @@ import (
 func BenchmarkCreate1(b *testing.B) {
 
 	for n := 0; n < b.N; n++ {
-		trie := CreateFuGrep(1, true,dawg.CreateDawg(1))
+		trie := CreateFuGrep(1, true, dawg.CreateDawg(1))
 		i := 0
 		file, _ := os.Open("../names2.txt")
 		scanner := bufio.NewScanner(file)
@@ -30,7 +30,7 @@ func BenchmarkCreate1(b *testing.B) {
 }
 
 func BenchmarkSearch(b *testing.B) {
-	trie := CreateFuGrep(2, true,dawg.CreateDawg(2))
+	trie := CreateFuGrep(2, true, dawg.CreateDawg(2))
 	trie.AddReferences([]string{"01111010", "101100001"})
 
 	b.ResetTimer()
@@ -53,7 +53,6 @@ func RunTestR(t *testing.T, k int, patterns []string, probe string, expected []s
 			maxlength = len(p)
 		}
 	}
-
 
 	r = (minlength / 2) - 1
 

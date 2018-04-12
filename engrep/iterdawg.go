@@ -94,9 +94,9 @@ func (d *Dawg) AddPattern(term string) {
 
 	d.Commit(i)
 
-  if i == len(runes) {
-    return
-  }
+	if i == len(runes) {
+		return
+	}
 
 	char, suffix := runes[i], runes[i+1:]
 	nextNode := CreateNode(d.index, suffix, d.K, true, len(suffix) == 0, char, d.K)

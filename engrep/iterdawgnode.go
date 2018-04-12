@@ -11,9 +11,9 @@ type Node struct {
 	References map[int]Reference
 	Suffix     []rune
 	char       rune
-	Cost int
-	parent *Node
-	Remaining int
+	Cost       int
+	parent     *Node
+	Remaining  int
 }
 
 func (n *Node) IsFinal() bool {
@@ -157,7 +157,7 @@ func CreateNode(id int, suffix []rune, k int, frontier bool, final bool, char ru
 		Final:      final,
 		frontier:   frontier,
 		Suffix:     suffix,
-		char: char,
-		Remaining: k - remaining,
+		char:       char,
+		Remaining:  k - remaining,
 	}
 }

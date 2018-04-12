@@ -12,16 +12,16 @@ type State struct {
 }
 
 type Engrep struct {
-	dawg        *Dawg
-	root        *Node
-	k           int
+	dawg      *Dawg
+	root      *Node
+	k         int
 	backtrack bool
 }
 
 func CreateEngrep(k int, backtrack bool, dawg *Dawg) *Engrep {
 	return &Engrep{
-		dawg:        dawg,
-		k:           k,
+		dawg:      dawg,
+		k:         k,
 		backtrack: backtrack,
 	}
 }
@@ -67,7 +67,7 @@ func (t *Engrep) Scan(text string, maxPatternLength int, callback func(int, int,
 			state := states[ii]
 			node := state.Node.Transition(char)
 
-			if node != nil && state.Inserts + node.Cost <= t.k {
+			if node != nil && state.Inserts+node.Cost <= t.k {
 				states[nx].Node = node
 				states[nx].Deletes = state.Deletes
 				states[nx].Inserts = state.Inserts + node.Cost
@@ -78,12 +78,12 @@ func (t *Engrep) Scan(text string, maxPatternLength int, callback func(int, int,
 
 				if node.Final && (state.Deletes <= node.Remaining || state.Inserts <= node.Remaining) {
 					if t.backtrack {
-						actual := text[state.Start:offset+1]
+						actual := text[state.Start : offset+1]
 						for _, reference := range node.Backtrack() {
-							callback(state.Start, offset, reference, actual, state.Deletes + state.Inserts)
+							callback(state.Start, offset, reference, actual, state.Deletes+state.Inserts)
 						}
 					} else {
-						callback(state.Start, offset, "", "", state.Deletes + state.Inserts)
+						callback(state.Start, offset, "", "", state.Deletes+state.Inserts)
 					}
 				}
 			}

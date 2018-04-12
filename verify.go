@@ -3,9 +3,9 @@ package main
 import (
 	"./engrep"
 	"fmt"
-	"sort"
 	"math"
 	"math/rand"
+	"sort"
 	"time"
 )
 
