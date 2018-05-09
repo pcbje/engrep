@@ -159,7 +159,7 @@ func main() {
 					z := []string{}
 					c := map[string]bool{}
 
-					trie.Scan(str+" ", max_len, func(s int, e int, actual string, reference string, d int) {
+					trie.Scan(str+" ", func(s int, e int, actual string, reference string, d int) {
 						if _, ok := c[reference]; !ok {
 							c[reference] = true
 

@@ -65,6 +65,7 @@ func (d *Dawg) Commit(lower int) {
 }
 
 func (d *Dawg) AddPattern(term string) {
+  //println(term)
 	if strings.Compare(term, d.previousTerm) < 0 {
 		log.Panic("Must be sorted")
 	}
@@ -79,7 +80,7 @@ func (d *Dawg) AddPattern(term string) {
 
 	i := 0
 
-	for i < upper && term[i] == d.previousTerm[i] {
+	for i < upper && term[i] == d.previousTerm[i] && i < len(d.uncheckedTransitions) {
 		node = d.uncheckedTransitions[i].Target
 		suffixLength := len(node.Suffix)
 		if suffixLength > 0 {
@@ -94,11 +95,14 @@ func (d *Dawg) AddPattern(term string) {
 
 	d.Commit(i)
 
-	if i == len(runes) {
+	if i >= len(runes) - 1 {
 		return
 	}
 
+
 	char, suffix := runes[i], runes[i+1:]
+
+
 	nextNode := CreateNode(d.index, suffix, d.K, true, len(suffix) == 0, char, d.K)
 	transition := Transition{Source: node, Char: char, Target: nextNode}
 	d.uncheckedTransitions = append(d.uncheckedTransitions, transition)

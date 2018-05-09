@@ -42,23 +42,17 @@ func (t *Engrep) AddReferences(references []string) {
 	t.root = t.dawg.Iterator()
 }
 
-func (t *Engrep) Scan(text string, maxPatternLength int, callback func(int, int, string, string, int)) ([]int, map[int][]int, []int) {
+func (t *Engrep) Scan(text string, callback func(int, int, string, string, string, int))  {
 	var states [100000]State = [100000]State{}
 	var up bool = true
 	var counter int = 0
 
-  var count []int = make([]int, len(text))
-	var hits map[int][]int = map[int][]int{}
-	hits[0] = []int{0, 0}
-
-	var errors []int = make([]int, 3)
 
 	for offset, char := range []rune(text) {
 		up = !up
 		nx := 0
 		counts := 0
 
-		out := 0
 		new := 0
 		nxdir := 1
 		if !up {
@@ -76,13 +70,7 @@ func (t *Engrep) Scan(text string, maxPatternLength int, callback func(int, int,
 			state := states[ii]
 			node := state.Node.Transition(char)
 
-			if _, ok := hits[state.Depth]; !ok {
-				hits[state.Depth] = []int{0, 0}
-			}
-
 			if node != nil && state.Inserts+node.Cost <= t.k {
-				hits[state.Depth][0]++
-
 				states[nx].Node = node
 				states[nx].Deletes = state.Deletes
 				states[nx].Inserts = state.Inserts + node.Cost
@@ -95,18 +83,14 @@ func (t *Engrep) Scan(text string, maxPatternLength int, callback func(int, int,
 
 				if node.Final && (state.Deletes <= node.Remaining || state.Inserts <= node.Remaining) {
 					if t.backtrack {
-						actual := text[state.Start : offset+1]
-						for _, reference := range node.Backtrack() {
-							callback(state.Start, offset, reference, actual, state.Deletes+state.Inserts)
-						}
+						actual := text[state.Start: offset+2]
+						pre := string(text[state.Start-1])
+						suf := string(text[offset+2])
+						callback(state.Start, offset, actual, pre, suf, state.Deletes+state.Inserts)
 					} else {
-						callback(state.Start, offset, "", "", state.Deletes+state.Inserts)
+						callback(state.Start, offset, "", "", "", state.Deletes+state.Inserts)
 					}
 				}
-			}
-
-			if node == nil {
-				hits[state.Depth][1]++
 			}
 
 			if state.Deletes+1 <= t.k {
@@ -118,32 +102,20 @@ func (t *Engrep) Scan(text string, maxPatternLength int, callback func(int, int,
 
 				nx += nxdir
 				counts++
-			} else {
-				out++
 			}
 		}
 
 		node := t.root.Transition(char)
 
 		if node != nil {
-			hits[0][0]++
 			states[nx].Node = node
 			states[nx].Inserts = node.Cost
 			states[nx].Deletes = node.Cost
 			states[nx].Start = offset
 			states[nx].Depth = 1
 			counts++
-		} else {
-			hits[0][1]++
 		}
-
-		count[offset] = counts
-		errors[0] += new
-		errors[1] += counts
-		errors[2] += out
 
 		counter = counts
 	}
-
-	return count, hits, errors
 }
