@@ -67,7 +67,9 @@ func (auto *Automata) FindAll(term string, maxDistance int) []Result {
 				pendingQueue = append(pendingQueue, nextIntersection)
 				if nextDictionaryNode.Final {
 					distance := auto.distance(nextLevenshteinState, len(term))
-					result = append(result, Result{Match: nextIntersection.Candidate(), Error: distance})
+					if distance <= maxDistance {
+						result = append(result, Result{Match: nextIntersection.Candidate(), Error: distance})
+					}
 
 					if distance == 0 {
 						break

@@ -11,21 +11,15 @@ type Entry struct {
 	Actual string
 	Reference string
 	Distance int
+	Info string
 }
 
 type Server struct {
 	engine *engrep.Engrep
 	auto *automata.Automata
-	maxk int
 }
 
-func Build(database map[string]string, maxk int) Server {
-	patterns := []string{}
-
-	for pattern, _ := range database {
-		patterns = append(patterns, pattern)
-	}
-
+func Build(patterns []string, maxk int) Server {
 	sort.Strings(patterns)
 
 	auto := automata.CreateAutomata(patterns)
@@ -78,6 +72,7 @@ func (s Server) Search(text string, k int) []Entry {
 					Actual: actual,
 					Reference: found.Match,
 					Distance: found.Error,
+					//Info: s.database[found.Match],
 				}
 
 				prev = actual
