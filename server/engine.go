@@ -39,7 +39,7 @@ func (s Server) SearchPattern(pattern string, k int) []Entry {
 	res := []Entry{}
 
 
-	for _, found := range s.auto.FindAll(pattern, k) {
+	for _, found := range s.auto.FindAll([]rune(pattern), k) {
 		entry := Entry{
 			Reference: found.Match,
 			Distance: found.Error,
@@ -79,7 +79,7 @@ func (s Server) Search(text string, k int) []Entry {
 
 	cache := map[string][]Entry{}
 
-	s.engine.Scan(text, k, func(z int, e int, actual string, pre string, suf string, d int) {
+	s.engine.Scan(text, k, func(z int, e int, actual string, pre []rune, suf []rune, d int) {
 		actual = strings.TrimSpace(actual)
 
 		validPre := len(pre) == 0
@@ -102,14 +102,17 @@ func (s Server) Search(text string, k int) []Entry {
 		}
 
 		if !validPre || !validSuf {
-			//println(validPre, validSuf, len(suf), suf)
+			//println(validPre, validSuf, len(suf), string(pre), string(suf))
 			return
 		}
+
+
 
 		if actual != prev {
 			if _, ok := cache[actual]; !ok {
 				x := []Entry{}
-				for _, found := range s.auto.FindAll(actual, k) {
+
+				for _, found := range s.auto.FindAll([]rune(actual), k) {
 					x = append(x, Entry{
 						Actual: actual,
 						Reference: found.Match,

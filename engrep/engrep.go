@@ -33,7 +33,7 @@ func (t *Engrep) AddReferences(references []string) {
 	var prev string
 	for _, reference := range references {
 		if reference != prev {
-			t.dawg.AddPattern(reference)
+			t.dawg.AddPattern([]rune(reference))
 			prev = reference
 		}
 	}
@@ -42,7 +42,7 @@ func (t *Engrep) AddReferences(references []string) {
 	t.root = t.dawg.Iterator()
 }
 
-func (t *Engrep) Scan(text string, k int, callback func(int, int, string, string, string, int))  {
+func (t *Engrep) Scan(text string, k int, callback func(int, int, string, []rune, []rune, int))  {
 	var states [100000]State = [100000]State{}
 	var up bool = true
 	var counter int = 0
@@ -50,8 +50,9 @@ func (t *Engrep) Scan(text string, k int, callback func(int, int, string, string
 	if k > t.k {
 		k = t.k
 	}
+	rtext := []rune(text)
 
-	for offset, char := range []rune(text) {
+	for offset, char := range rtext {
 		up = !up
 		nx := 0
 		counts := 0
@@ -86,12 +87,12 @@ func (t *Engrep) Scan(text string, k int, callback func(int, int, string, string
 
 				if node.Final && (state.Deletes <= node.Remaining || state.Inserts <= node.Remaining) {
 					if t.backtrack {
-						actual := text[state.Start:offset+2]
-						pre := string(text[state.Start-1-state.Deletes:state.Start])
-						suf := string(text[offset+2:offset+2+1+state.Inserts])
+						actual := string(rtext[state.Start:offset+2])
+						pre := rtext[state.Start-1-state.Deletes:state.Start]
+						suf := rtext[offset+2:offset+2+1+state.Inserts]
 						callback(state.Start, offset, actual, pre, suf, state.Deletes+state.Inserts)
 					} else {
-						callback(state.Start, offset, "", "", "", state.Deletes+state.Inserts)
+						callback(state.Start, offset, "", []rune{}, []rune{}, state.Deletes+state.Inserts)
 					}
 				}
 			}

@@ -1,7 +1,7 @@
 package automata
 
 type Node struct {
-	Label  string
+	Label  []rune
 	Final  bool
 	Edges  map[rune]*Node
 	Labels []rune
@@ -19,7 +19,7 @@ func (n *Node) AddEdge(char rune, target *Node) {
 	n.Edges[char] = target
 }
 
-func CreateNode(label string, final bool) *Node {
+func CreateNode(label []rune, final bool) *Node {
 	return &Node{
 		Label:  label,
 		Final:  final,

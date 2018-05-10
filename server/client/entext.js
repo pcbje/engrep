@@ -88,9 +88,11 @@ $scope.search = function(preserve) {
   $scope.clear();
 
   if (!preserve) {
-    $scope.text = $sanitize(document.getElementById('text').innerHTML);
-    var regex = new RegExp("<span([^>]*)>([^<]+)</span>", "g")
-    $scope.text = $scope.text.replace(regex, "$2");
+    $scope.text = document.getElementById('text').innerHTML;
+    var regex = new RegExp("<span([^>]*)>", "g")
+    $scope.text = $scope.text.replace(regex, "");
+    regex = new RegExp("</span>", "g")
+    $scope.text = $scope.text.replace(regex, "");
   }
 
   $http.post('search?e=' +  $scope.response.info.e + '&k=' + $scope.k, $scope.text).then(function(res) {
@@ -120,10 +122,9 @@ $scope.search = function(preserve) {
     var pr = null
 
     $scope.response.results.map(function(result, i) {
-      if (pr == result.Reference && Math.abs(result.Offset - po) < result.Actual.length) {
+      if (Math.abs(result.Offset - po) < result.Actual.length) {
         return;
       }
-
 
       $scope.reference_hit_count++;
 

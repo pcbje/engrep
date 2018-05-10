@@ -19,7 +19,7 @@ type Transition struct {
 type Dawg struct {
 	index                int
 	Root                 *Node
-	previousTerm         string
+	previousTerm         []rune
 	uncheckedTransitions []Transition
 	minimizedNodes       map[string]*Node
 	K                    int
@@ -29,7 +29,7 @@ func CreateDawg(k int) *Dawg {
 	return &Dawg{
 		K:                    k,
 		index:                1,
-		previousTerm:         "",
+		previousTerm:         []rune{},
 		Root:                 CreateNode(0, []rune{}, k, true, false, 0, k),
 		uncheckedTransitions: []Transition{},
 		minimizedNodes:       map[string]*Node{},
@@ -64,9 +64,9 @@ func (d *Dawg) Commit(lower int) {
 	d.uncheckedTransitions = d.uncheckedTransitions[:lower]
 }
 
-func (d *Dawg) AddPattern(term string) {
+func (d *Dawg) AddPattern(term []rune) {
   //println(term)
-	if strings.Compare(term, d.previousTerm) < 0 {
+	if strings.Compare(string(term), string(d.previousTerm)) < 0 {
 		log.Panic("Must be sorted")
 	}
 
@@ -101,7 +101,6 @@ func (d *Dawg) AddPattern(term string) {
 
 
 	char, suffix := runes[i], runes[i+1:]
-
 
 	nextNode := CreateNode(d.index, suffix, d.K, true, len(suffix) == 0, char, d.K)
 	transition := Transition{Source: node, Char: char, Target: nextNode}

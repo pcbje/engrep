@@ -14,7 +14,6 @@ import (
 	 "strings"
 	 "math/rand"
 	 "runtime"
-
 )
 
 func init() {
@@ -158,7 +157,6 @@ func (s Server) searchPattern(w http.ResponseWriter, r *http.Request) {
 
 	pattern := r.URL.Query().Get("p")
 
-
 	if len(pattern) == 0 {
 		log.Panic("pattern not provided")
 	}
@@ -200,8 +198,6 @@ func (s Server) search(w http.ResponseWriter, r *http.Request) {
 	}
 	k, err := strconv.Atoi(kstr)
 
-
-
 	if err != nil {
 		log.Panic("k is not a number")
 	}
@@ -212,10 +208,13 @@ func (s Server) search(w http.ResponseWriter, r *http.Request) {
 
 	reader := bufio.NewReader(r.Body)
 
-	bytes := make([]byte, 1024 * 10)
-	reader.Read(bytes)
+	bytes := make([]byte, 1024 * 1024)
 
-	text := "    " + string(bytes) + "    "
+	rr, _ := reader.Read(bytes)
+
+	bytes  = bytes[0:rr]
+
+	text := "        " + string(bytes) + "         "
 
 	results := s.engine[engine].server.Search(text, k)
 
@@ -237,6 +236,8 @@ func (s Server) search(w http.ResponseWriter, r *http.Request) {
 	s.engine[engine].last = start
 
 	s.log(r, fmt.Sprintf("searched. engine: %s, k: %s, patterns: %d, len: %d took: %s", engine, kstr, s.engine[engine].patterns, len(text), time.Since(start)))
+
+	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 
 	fmt.Fprintf(w, string(jsonBytes))
 }
@@ -304,6 +305,7 @@ func NoCache(h http.Handler) http.Handler {
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		w.Header().Set("Pragma", "no-cache")
 		w.Header().Set("Expires", "0")
+		w.Header().Set("Accept-Charset", "UTF-8")
 		h.ServeHTTP(w, r)
 	})
 }

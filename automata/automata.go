@@ -21,7 +21,7 @@ func (a *Automata) distance(state *State, queryLength int) int {
 	return minDistance
 }
 
-func (auto *Automata) characteristicVector(x rune, term string, k int, i int) []bool {
+func (auto *Automata) characteristicVector(x rune, term []rune, k int, i int) []bool {
 	characteristicVector := make([]bool, k)
 
 	for j := 0; j < k; j++ {
@@ -37,7 +37,7 @@ type Result struct {
 }
 
 
-func (auto *Automata) FindAll(term string, maxDistance int) []Result {
+func (auto *Automata) FindAll(term []rune, maxDistance int) []Result {
 	var labels []rune = []rune{}
 	var label rune
 	var intersection *Intersection
@@ -52,7 +52,7 @@ func (auto *Automata) FindAll(term string, maxDistance int) []Result {
 
 	initialState := CreateState([]*Position{CreatePosition(0, 0)})
 	pendingQueue := []*Intersection{CreateIntersection(auto.Dawg.Root, initialState, nil, 0)}
-	
+
 	for len(labels) > 0 || len(pendingQueue) > 0 {
 		if len(labels) > 0 {
 			dictionaryNode := intersection.Node
@@ -100,7 +100,7 @@ func CreateAutomata(patterns []string) *Automata {
 	}
 
 	for _, pattern := range patterns {
-		auto.Dawg.AddPattern(pattern)
+		auto.Dawg.AddPattern([]rune(pattern))
 	}
 
 	auto.Dawg.Finish()
