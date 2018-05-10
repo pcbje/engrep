@@ -9,7 +9,7 @@ type State struct {
 	Node    *Node
 	Deletes int
 	Inserts int
-	Depth int
+	Depth   int
 }
 
 type Engrep struct {
@@ -42,7 +42,7 @@ func (t *Engrep) AddReferences(references []string) {
 	t.root = t.dawg.Iterator()
 }
 
-func (t *Engrep) Scan(text string, k int, callback func(int, int, string, []rune, []rune, int))  {
+func (t *Engrep) Scan(text string, k int, callback func(int, int, string, []rune, []rune, int)) {
 	var states [100000]State = [100000]State{}
 	var up bool = true
 	var counter int = 0
@@ -79,7 +79,7 @@ func (t *Engrep) Scan(text string, k int, callback func(int, int, string, []rune
 				states[nx].Deletes = state.Deletes
 				states[nx].Inserts = state.Inserts + node.Cost
 				states[nx].Start = state.Start
-				states[nx].Depth = state.Depth+1
+				states[nx].Depth = state.Depth + 1
 
 				nx += nxdir
 				counts++
@@ -87,9 +87,9 @@ func (t *Engrep) Scan(text string, k int, callback func(int, int, string, []rune
 
 				if node.Final && (state.Deletes <= node.Remaining || state.Inserts <= node.Remaining) {
 					if t.backtrack {
-						actual := string(rtext[state.Start:offset+2])
-						pre := rtext[state.Start-1-state.Deletes:state.Start]
-						suf := rtext[offset+2:offset+2+1+state.Inserts]
+						actual := string(rtext[state.Start : offset+2])
+						pre := rtext[state.Start-1-state.Deletes : state.Start]
+						suf := rtext[offset+2 : offset+2+1+state.Inserts]
 						callback(state.Start, offset, actual, pre, suf, state.Deletes+state.Inserts)
 					} else {
 						callback(state.Start, offset, "", []rune{}, []rune{}, state.Deletes+state.Inserts)

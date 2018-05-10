@@ -65,7 +65,7 @@ func (d *Dawg) Commit(lower int) {
 }
 
 func (d *Dawg) AddPattern(term []rune) {
-  //println(term)
+	//println(term)
 	if strings.Compare(string(term), string(d.previousTerm)) < 0 {
 		log.Panic("Must be sorted")
 	}
@@ -95,10 +95,9 @@ func (d *Dawg) AddPattern(term []rune) {
 
 	d.Commit(i)
 
-	if i >= len(runes) - 1 {
+	if i >= len(runes)-1 {
 		return
 	}
-
 
 	char, suffix := runes[i], runes[i+1:]
 

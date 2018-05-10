@@ -36,7 +36,6 @@ type Result struct {
 	Error int
 }
 
-
 func (auto *Automata) FindAll(term []rune, maxDistance int) []Result {
 	var labels []rune = []rune{}
 	var label rune

@@ -1,13 +1,13 @@
 package automata
 
 import (
-	"testing"
-	"sort"
 	"reflect"
+	"sort"
+	"testing"
 )
 
 func Test1(t *testing.T) {
-  auto := CreateAutomata([]string{"bjelland", "petter"})
+	auto := CreateAutomata([]string{"bjelland", "petter"})
 	expected := []string{"petter"}
 	actual := []string{}
 

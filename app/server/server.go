@@ -1,12 +1,11 @@
-package main
+package server
 
 import (
-	"./server"
 	"fmt"
-	"os"
+
 	"strconv"
 	"bufio"
-	"io/ioutil"
+
 	"time"
 	 "encoding/json"
 	 "log"
@@ -30,47 +29,28 @@ func RandStringRunes(n int, letterRunes []rune) string {
 	return string(b)
 }
 
-func GetPatterns(path string) []string {
-	var patterns map[string]string
 
-	bytes, err := ioutil.ReadFile(path)
-	if err != nil {
-		log.Panic(err)
-	}
 
-	json.Unmarshal(bytes, &patterns)
-
-	ps := []string{}
-
-	for p, _ := range patterns {
-		if len(p) > 11 {
-			ps = append(ps, p)
-		}
-	}
-
-	return ps
-}
-
-type Engine struct {
-	server server.Server
+type Dictionary struct {
+	server Engrep
 	last time.Time
 	patterns int
 }
 
 type Server struct {
 	maxk int
-	engine map[string]*Engine
+	engine map[string]*Dictionary
 	timeout map[string]time.Time
 }
 
 type Response struct {
-	Results []server.Entry `json:"results"`
+	Results []Entry `json:"results"`
 	Took string `json:"took"`
 	Error string `json:"error"`
 	Patterns int `json:"patterns"`
 }
 
-func (s Server) create(w http.ResponseWriter, r *http.Request) {
+func (s Server) Create(w http.ResponseWriter, r *http.Request) {
 	var patterns []string
 
 	reader := bufio.NewReader(r.Body)
@@ -111,7 +91,7 @@ func (s Server) create(w http.ResponseWriter, r *http.Request) {
 		log.Panic("max k=2")
 	}
 
-	s.engine[key] = &Engine{server: server.Build(patterns, maxk), last: time.Now(), patterns: len(patterns)}
+	s.engine[key] = &Dictionary{server: Build(patterns, maxk), last: time.Now(), patterns: len(patterns)}
 
 	s.log(r, fmt.Sprintf("created: %s, max k: %s, patterns: %d", key, maxkstr, len(patterns)))
 
@@ -124,7 +104,7 @@ func (s Server) log(r *http.Request, message string) {
 	log.Print(fmt.Sprintf("[%s] %s", ip, message))
 }
 
-func (s Server) search(w http.ResponseWriter, r *http.Request) {
+func (s Server) Search(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
 	engine := r.URL.Query().Get("d")
@@ -253,42 +233,14 @@ func NoCache(h http.Handler) http.Handler {
 	})
 }
 
-func main() {
-	listen := os.Args[1]
-	names := GetPatterns(os.Args[2])
-	maxk, err := strconv.Atoi(os.Args[3])
-
-	f, err := os.OpenFile("engrep-server.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
-	if err != nil {
-	    log.Fatalf("error opening file: %v", err)
-	}
-	defer f.Close()
-
-	log.SetOutput(f)
-
-	if err != nil {
-		log.Panic(err)
-	}
-
+func CreateServer(names []string, maxk int) Server {
 	s := Server{
-		engine: map[string]*Engine{"demo": &Engine{server: server.Build(names, maxk), patterns: len(names)}},
+		engine: map[string]*Dictionary{"demo": &Dictionary{server: Build(names, maxk), patterns: len(names)}},
 		maxk: maxk,
 		timeout: map[string]time.Time{},
 	}
 
-	http.Handle("/search", s.Limit(http.HandlerFunc(s.search)))
-	http.Handle("/create", s.Limit(http.HandlerFunc(s.create)))
-	http.Handle("/", NoCache(http.FileServer(http.Dir("./server/client"))))
-
-	log.Print(fmt.Sprintf("Listening on: %v", listen))
-
 	go s.removeInactive()
 
-	if len(os.Args) == 6 {
-		// 4: /etc/letsencrypt/live/www.yourdomain.com/fullchain.pem
-		// 5: /etc/letsencrypt/live/www.yourdomain.com/privkey.pem
-		http.ListenAndServeTLS(listen, os.Args[4], os.Args[5], nil)
-	} else {
-		http.ListenAndServe(listen, nil)
-	}
+	return s
 }

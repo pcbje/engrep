@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-
 func RunTestR(t *testing.T, k int, patterns []string, probe string, expected []string, r int) {
 	minlength := 99
 

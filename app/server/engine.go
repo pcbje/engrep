@@ -1,11 +1,16 @@
 package server
 
 import (
-	"../engrep"
-	"../automata"
+	"../../engrep"
+	"../../automata"
 	 "sort"
 	 "strings"
 )
+
+type Engrep struct {
+	engine *engrep.Engrep
+	auto *automata.Automata
+}
 
 type Entry struct {
 	Actual string
@@ -15,12 +20,8 @@ type Entry struct {
 	Offset int
 }
 
-type Server struct {
-	engine *engrep.Engrep
-	auto *automata.Automata
-}
 
-func Build(patterns []string, maxk int) Server {
+func Build(patterns []string, maxk int) Engrep {
 	sort.Strings(patterns)
 
 	auto := automata.CreateAutomata(patterns)
@@ -29,13 +30,13 @@ func Build(patterns []string, maxk int) Server {
 
 	trie.AddReferences(patterns)
 
-	return Server{
+	return Engrep{
 		engine: trie,
 		auto: auto,
 	}
 }
 
-func (s Server) Search(text string, k int) []Entry {
+func (s Engrep) Search(text string, k int) []Entry {
 	stop := map[string]bool{
 		".":	true,
 		",":	true,

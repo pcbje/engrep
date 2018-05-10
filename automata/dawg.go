@@ -34,7 +34,7 @@ func (d *Dawg) minimize(lowerBound int) {
 		if _, e := d.minimizedNodes[string(t.Target.Label)]; !e {
 			d.minimizedNodes[string(t.Target.Label)] = t.Target
 		}
-		
+
 		t.Source.AddEdge(t.Char, d.minimizedNodes[string(t.Target.Label)])
 	}
 

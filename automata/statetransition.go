@@ -115,7 +115,7 @@ func (st StateTransition) transition(pos *Position, characteristicVector []bool,
 
 		}
 		// else, h == w
-		// [Insertion]: Leave the index alone; increment the error by one.		
+		// [Insertion]: Leave the index alone; increment the error by one.
 		return CreateState([]*Position{CreatePosition(i, e+1)})
 	}
 	// The edit distance is at its maximum, allowed value.  Only consider this

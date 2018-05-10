@@ -1,0 +1,9 @@
+2018/05/10 23:48:40 Listening on: :8080
+2018/05/10 23:49:20 Listening on: :8080
+2018/05/10 23:49:40 [[] searched. engine: demo, k: 2, patterns: 539365, len: 1100 took: 427.596708ms
+2018/05/10 23:49:42 [[] searched. engine: demo, k: 2, patterns: 539365, len: 1100 took: 81.521621ms
+2018/05/10 23:49:43 [[] searched. engine: demo, k: 2, patterns: 539365, len: 1100 took: 69.963429ms
+2018/05/10 23:49:45 [[] created: s1tMkoDh, max k: 2, patterns: 1
+2018/05/10 23:49:45 [[] searched. engine: demo, k: 2, patterns: 539365, len: 1100 took: 90.723076ms
+2018/05/10 23:49:47 [[] searched. engine: s1tMkoDh, k: 2, patterns: 1, len: 21 took: 595.89µs
+2018/05/10 23:49:51 [[] searched. engine: demo, k: 2, patterns: 539365, len: 1100 took: 68.047984ms
