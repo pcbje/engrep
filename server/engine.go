@@ -77,20 +77,28 @@ func (s Server) Search(text string, k int) []Entry {
 	prev := ""
 	res := []Entry{}
 
+	cache := map[string][]Entry{}
+
 	s.engine.Scan(text, k, func(z int, e int, actual string, pre string, suf string, d int) {
 		actual = strings.TrimSpace(actual)
 
 		validPre := len(pre) == 0
 		validSuf := len(suf) == 0
 
-		for _, s := range pre {
-				_, v := stop[string(s)]
-				validPre = validPre || v
+		if !validPre {
+			for _, s := range pre {
+					_, v := stop[string(s)]
+					validPre = validPre || v
+					if validPre {break}
+			}
 		}
 
-		for _, s := range suf {
-				_, v := stop[string(s)]
-				validSuf = validSuf || v
+		if !validSuf {
+			for _, s := range suf {
+					_, v := stop[string(s)]
+					validSuf = validSuf || v
+					if validSuf {break}
+			}
 		}
 
 		if !validPre || !validSuf {
@@ -98,21 +106,26 @@ func (s Server) Search(text string, k int) []Entry {
 			return
 		}
 
-
-
 		if actual != prev {
-			for _, found := range s.auto.FindAll(actual, k) {
-				entry := Entry{
-					Actual: actual,
-					Reference: found.Match,
-					Distance: found.Error,
-					Offset: z,
-					//Info: s.database[found.Match],
+			if _, ok := cache[actual]; !ok {
+				x := []Entry{}
+				for _, found := range s.auto.FindAll(actual, k) {
+					x = append(x, Entry{
+						Actual: actual,
+						Reference: found.Match,
+						Distance: found.Error,
+						Offset: z,
+						//Info: s.database[found.Match],
+					})
 				}
 
-				prev = actual
-				res = append(res, entry)
+				cache[actual] = x
 			}
+
+			println(actual)
+
+			prev = actual
+			res = append(res, cache[actual]...)
 		}
 	})
 

@@ -44,7 +44,9 @@ func GetPatterns(path string) []string {
 	ps := []string{}
 
 	for p, _ := range patterns {
-		ps = append(ps, p)
+		if len(p) > 11 {
+			ps = append(ps, p)
+		}
 	}
 
 	return ps

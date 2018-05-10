@@ -86,7 +86,7 @@ func (t *Engrep) Scan(text string, k int, callback func(int, int, string, string
 
 				if node.Final && (state.Deletes <= node.Remaining || state.Inserts <= node.Remaining) {
 					if t.backtrack {
-						actual := text[state.Start: offset+2]
+						actual := text[state.Start:offset+2]
 						pre := string(text[state.Start-1-state.Deletes:state.Start])
 						suf := string(text[offset+2:offset+2+1+state.Inserts])
 						callback(state.Start, offset, actual, pre, suf, state.Deletes+state.Inserts)
