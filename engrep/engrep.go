@@ -42,11 +42,14 @@ func (t *Engrep) AddReferences(references []string) {
 	t.root = t.dawg.Iterator()
 }
 
-func (t *Engrep) Scan(text string, callback func(int, int, string, string, string, int))  {
+func (t *Engrep) Scan(text string, k int, callback func(int, int, string, string, string, int))  {
 	var states [100000]State = [100000]State{}
 	var up bool = true
 	var counter int = 0
 
+	if k > t.k {
+		k = t.k
+	}
 
 	for offset, char := range []rune(text) {
 		up = !up
@@ -70,7 +73,7 @@ func (t *Engrep) Scan(text string, callback func(int, int, string, string, strin
 			state := states[ii]
 			node := state.Node.Transition(char)
 
-			if node != nil && state.Inserts+node.Cost <= t.k {
+			if node != nil && state.Inserts+node.Cost <= k {
 				states[nx].Node = node
 				states[nx].Deletes = state.Deletes
 				states[nx].Inserts = state.Inserts + node.Cost
@@ -93,7 +96,7 @@ func (t *Engrep) Scan(text string, callback func(int, int, string, string, strin
 				}
 			}
 
-			if state.Deletes+1 <= t.k {
+			if state.Deletes+1 <= k {
 				states[nx].Node = state.Node
 				states[nx].Deletes = state.Deletes + 1
 				states[nx].Inserts = state.Inserts

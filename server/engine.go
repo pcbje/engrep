@@ -34,6 +34,23 @@ func Build(patterns []string, maxk int) Server {
 	}
 }
 
+func (s Server) SearchPattern(pattern string, k int) []Entry {
+	res := []Entry{}
+
+	println(pattern)
+	for _, found := range s.auto.FindAll(pattern, k) {
+		entry := Entry{
+			Reference: found.Match,
+			Distance: found.Error,
+			//Info: s.database[found.Match],
+		}
+
+		res = append(res, entry)
+	}
+
+	return res
+}
+
 func (s Server) Search(text string, k int) []Entry {
 	stop := map[string]bool{
 		".":	true,
@@ -56,7 +73,7 @@ func (s Server) Search(text string, k int) []Entry {
 	prev := ""
 	res := []Entry{}
 
-	s.engine.Scan(" "+text+" ", func(z int, e int, actual string, pre string, suf string, d int) {
+	s.engine.Scan(" "+text+" ", k, func(z int, e int, actual string, pre string, suf string, d int) {
 		actual = strings.TrimSpace(actual)
 		_, validPre := stop[pre]
 		_, validSuf := stop[suf]

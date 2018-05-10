@@ -1,1 +1,228 @@
-hi
+<html ng-app="entext">
+  <head>
+    <title>Entext: Fast multi-pattern approximate search</title>
+    <script src="lib/angular-1.5.8.min.js"></script>
+    <script src="lib/angular-sanitize.js"></script>
+    <script src="entext.js"></script>
+    <style>
+      /* latin */
+      @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        src: url(roboto.woff2) format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+      }
+
+      * {
+      	font-family: Roboto,Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,Lucida Grande,sans-serif;
+      	-webkit-font-smoothing: antialiased;
+      	font-smoothing: antialiased
+      }
+
+      html, body {
+        background-color: #c2d4d8;
+        margin: 0;
+        padding: 0;
+      }
+
+      button.button {
+      	background-color: #6d9ebf;
+      	color: #fff;
+      	border: 0;
+      	padding: 7px 12px 7px 9px;
+      	outline: none;
+      	border-radius: 1px;
+      	font-size: 0.9em;
+      }
+
+
+      button.button * {
+      	vertical-align: top;
+      }
+
+      button.button:active {
+          transform: translateY(1px);
+          background-color: #648cb3;
+      }
+
+      #tap {
+        position: absolute;
+        margin-left: -110px;
+        margin-top: 28px;
+      }
+
+      .left {
+        float:left;
+      }
+
+      .header {
+        margin-top: 5px;
+        font-size: 1.2em;
+      }
+
+      .right {
+        float:right;
+      }
+
+      .clear {
+        clear:both;
+      }
+      .small {
+        font-size: 0.8em;
+        margin-left:10px;
+      }
+
+      .verysmall {
+        font-size: 0.7em;
+        margin-top: 10px;
+        color: #888;
+      }
+
+      .row {
+        margin-left:50px;
+        margin-right:10px;
+        width: 700px;
+
+      }
+
+      #content {
+        max-width: 800px;
+        text-align: left;
+        margin: 10px auto;
+      }
+
+      .cmd {
+        background-color: #d6e3e8;
+        font-family: monospace;
+        padding: 8px;
+      }
+
+      .text * {
+        font-family: monospace;
+      }
+
+      .text:hover {
+        border: 1px solid #648cb3;
+      }
+
+      .text {
+
+          cursor: default;
+        	margin: 10px;
+          margin-left: 170px;
+          margin-right: 100px;
+          width: 658px;
+        	padding: 20px;
+          border: 1px solid transparent;
+        	background-color: #fefefe;
+        	box-shadow: 0 0 10px rgba(0,0,0,.3);
+      	  display: block;
+          unicode-bidi: embed;
+          font-family: monospace;
+          white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+          white-space: -pre-wrap; /* Opera */
+          white-space: -o-pre-wrap; /* Opera */
+          white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+          word-wrap: break-word; /* IE 5.5+ */
+      }
+
+      #context {
+        background-color: #d6e3e8;
+        white-space: nowrap;
+        width: 1040px;
+        margin-left: -120px;
+      }
+
+      .context {
+        margin-top: 21px;
+        width: 170px;
+        font-size: 0.9em;
+      }
+
+      .info {
+        color: #666;
+      }
+
+      .yellow-0 {
+        background-color: yellow;
+      }
+
+      .yellow-1 {
+        background-color: #faff91;
+      }
+
+      .yellow-2 {
+        background-color: #faffd1;
+      }
+
+      .context-row {
+        border-bottom:  1px solid #c3ccdb;
+        font-family: monospace;
+        padding-left: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #333;
+      }
+
+      .context-row a {
+          font-family: monospace;
+          font-size: 1em;
+      }
+
+      #title {
+        font-size: 1.3em;
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      #credit {
+        font-size: 0.8em;
+        margin: 20px 0;
+        text-align: center;
+      }
+
+    </style>
+  </head>
+  <body ng-controller="MainCtrl">
+    <div id="content">
+      <div id="title">Entext: Fast multi-pattern approximate search</div>
+      <div class="row">
+        <div class="left header">
+          {{response.info.e}} <span class="info">({{response.info.patterns}} patterns)</span>
+        </div>
+        <div class="right">
+          <button class="button">+ Create new dictionary</button>
+        </div>
+
+        <div class="clear"></div>
+      </div>
+      <div id="context">
+        <div id="left-context" class="left context"></div>
+        <div id="right-context" class="right context"></div>
+        <div class="text" contenteditable="true" ng-bind-html="staging_text"></div>
+
+      <div class="clear"></div>
+      </div>
+      <div class="row">
+        <div class="left">
+          <button class="button">Search</button>
+          <span class="small">
+            Max distance:
+            <input type="radio" ng-model="k" name="k" value="0" id="k0"> <label for="k0">0</label>
+            <input type="radio" ng-model="k" name="k" value="1" id="k1"> <label for="k1">1</label>
+            <input type="radio" ng-model="k" name="k" value="2" id="k2"> <label for="k2">2</label>
+          </span>
+        </div>
+
+        <div class="right">
+          <div class="cmd">$ curl https://entext.io/search?k=1 "lorem ipsum..."</div>
+        </div>
+
+        <div class="clear"></div>
+
+        <div class="verysmall">Took {{response.took}}</div>
+      </div>
+    </div>
+  </body>
+</html>
