@@ -38,7 +38,7 @@ func Build(patterns []string, maxk int) Server {
 func (s Server) SearchPattern(pattern string, k int) []Entry {
 	res := []Entry{}
 
-	println(pattern)
+
 	for _, found := range s.auto.FindAll(pattern, k) {
 		entry := Entry{
 			Reference: found.Match,
@@ -122,7 +122,7 @@ func (s Server) Search(text string, k int) []Entry {
 				cache[actual] = x
 			}
 
-			println(actual)
+			//println(actual)
 
 			prev = actual
 			res = append(res, cache[actual]...)

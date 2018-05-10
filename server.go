@@ -219,6 +219,9 @@ func (s Server) search(w http.ResponseWriter, r *http.Request) {
 
 	results := s.engine[engine].server.Search(text, k)
 
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+
 	response := Response{
 		Results: results,
 		Error: "",
@@ -226,6 +229,7 @@ func (s Server) search(w http.ResponseWriter, r *http.Request) {
 		Info: map[string]interface{}{
 			"e": engine,
 			"patterns": s.engine[engine].patterns,
+			//"allocated_gb": float64(m.Alloc) / (1024.0*1024.0*1024.0),
 		},
 	}
 	jsonBytes, _ := json.MarshalIndent(response, "", "  ")
