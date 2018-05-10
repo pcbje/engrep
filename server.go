@@ -65,6 +65,7 @@ type Server struct {
 type Response struct {
 	Results []server.Entry `json:"results"`
 	Took string `json:"took"`
+	Error string `json:"error"`
 	Info map[string]interface{} `json:"info"`
 }
 
@@ -164,6 +165,7 @@ func (s Server) searchPattern(w http.ResponseWriter, r *http.Request) {
 
 	response := Response{
 		Results: results,
+		Error: "",
 		Took: fmt.Sprintf("%s", time.Since(start)),
 	}
 	jsonBytes, _ := json.MarshalIndent(response, "", "  ")
@@ -217,6 +219,7 @@ func (s Server) search(w http.ResponseWriter, r *http.Request) {
 
 	response := Response{
 		Results: results,
+		Error: "",
 		Took: fmt.Sprintf("%s", time.Since(start)),
 		Info: map[string]interface{}{
 			"e": engine,
@@ -267,7 +270,15 @@ func (s Server) Limit(h http.Handler) http.Handler {
 			if time.Since(prev).Seconds() < 2.0 {
 				s.timeout[ip] = start
 				s.log(r, "too frequent")
-				log.Panic("Max one request every two seconds")
+
+				response := Response{
+					Took: fmt.Sprintf("%s", time.Since(start)),
+					Error: "Max one request per 2 seonds...",
+				}
+				jsonBytes, _ := json.MarshalIndent(response, "", "  ")
+
+				fmt.Fprintf(w, string(jsonBytes))
+				return
 			}
 		}
 

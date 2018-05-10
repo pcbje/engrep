@@ -79,6 +79,10 @@
         color: #888;
       }
 
+      .error {
+        color: red;
+      }
+
       .row {
         margin-left:50px;
         margin-right:10px;
@@ -105,9 +109,15 @@
       .text:hover {
         border: 1px solid #648cb3;
       }
-
+      .text * {
+        font-size: 12px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: auto !important;
+        text-align: left !important;
+      }
       .text {
-
+        font-size: 1em;
           cursor: default;
         	margin: 10px;
           margin-left: 170px;
@@ -176,11 +186,7 @@
         text-align: center;
       }
 
-      #credit {
-        font-size: 0.8em;
-        margin: 20px 0;
-        text-align: center;
-      }
+
 
     </style>
   </head>
@@ -200,13 +206,13 @@
       <div id="context">
         <div id="left-context" class="left context"></div>
         <div id="right-context" class="right context"></div>
-        <div class="text" contenteditable="true" ng-bind-html="staging_text"></div>
+        <div id="text" ng-click="clear()" class="text" contenteditable="true" ng-bind-html="staging_text"></div>
 
       <div class="clear"></div>
       </div>
       <div class="row">
         <div class="left">
-          <button class="button">Search</button>
+          <button ng-click="search()" class="button">Search</button>
           <span class="small">
             Max distance:
             <input type="radio" ng-model="k" name="k" value="0" id="k0"> <label for="k0">0</label>
@@ -216,12 +222,15 @@
         </div>
 
         <div class="right">
-          <div class="cmd">$ curl https://entext.io/search?k=1 "lorem ipsum..."</div>
+          <div class="cmd">$ curl https://entext.io/search?k={{k}} "lorem ipsum..."</div>
         </div>
 
         <div class="clear"></div>
 
-        <div class="verysmall">Took {{response.took}}</div>
+        <div class="verysmall">
+          Took {{response.took}}
+          <span class="error">{{response.error}}</span>
+        </div>
       </div>
     </div>
   </body>

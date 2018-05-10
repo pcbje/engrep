@@ -68,6 +68,8 @@ func (s Server) Search(text string, k int) []Entry {
 		"]":	true,
 		"{":	true,
 		"}":	true,
+		">":	true,
+		"<":	true,
 	}
 
 	prev := ""
