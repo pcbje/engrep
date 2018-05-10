@@ -2,3 +2,4 @@
 .DS_Store
 engrep-server.log
 *.log
+wikinames.json
