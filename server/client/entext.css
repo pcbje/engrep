@@ -10,17 +10,24 @@
 * {
   font-family: Roboto,Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,Lucida Grande,sans-serif;
   -webkit-font-smoothing: antialiased;
-  font-smoothing: antialiased
+  font-smoothing: antialiased;
+  font-size: 13px;
 }
 
 html, body {
-  background-color: #c2d4d8;
+  background-color: #fafafa;
   margin: 0;
   padding: 0;
 }
 
+a {
+	color: #3f51b5;
+	font-weight: 100;
+	text-decoration: none;
+}
+
 button.button {
-  background-color: #6d9ebf;
+  background-color: #4f60c1;
   color: #fff;
   border: 0;
   padding: 7px 12px 7px 9px;
@@ -36,7 +43,7 @@ button.button * {
 
 button.button:active {
     transform: translateY(1px);
-    background-color: #648cb3;
+    background-color: #3f51b5;
 }
 
 button.button.grey {
@@ -71,14 +78,20 @@ button.button.grey:active {
   clear:both;
 }
 .small {
-  font-size: 0.8em;
+  font-size: 0.9em;
   margin-left:10px;
 }
 
 .verysmall {
-  font-size: 0.7em;
+  font-size: 0.8em;
   margin-top: 10px;
   color: #888;
+}
+
+#status {
+  padding: 6px;
+  color: red;
+  font-weight: bold;
 }
 
 .error {
@@ -88,44 +101,36 @@ button.button.grey:active {
 .row {
   margin-left:50px;
   margin-right:10px;
-  width: 700px;
+  width: 800px;
 
 }
 
 #content {
-  max-width: 800px;
+  max-width: 900px;
   text-align: left;
   margin: 10px auto;
 }
 
 .cmd {
-  background-color: #eee;
   font-family: monospace;
-  padding: 8px;
+  padding-left: 2px;
   margin-bottom: 10px;
+  font-size: 0.9em;
+  display: none;
 }
 
-.text * {
-  font-family: monospace;
-}
 
 .text:hover {
   border: 1px solid #648cb3;
 }
-.text * {
-  font-size: 12px !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  width: auto !important;
-  text-align: left !important;
-}
+
 .text {
-  font-size: 1em;
+    font-size: 1em;
     cursor: default;
     margin: 10px;
     margin-left: 170px;
     margin-right: 100px;
-    width: 658px;
+    width: 758px;
     padding: 20px;
     border: 1px solid transparent;
     background-color: #fefefe;
@@ -140,16 +145,25 @@ button.button.grey:active {
     word-wrap: break-word; /* IE 5.5+ */
 }
 
+.text * {
+  font-family: monospace;
+  font-size: 13px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: auto !important;
+  text-align: left !important;
+}
+
 #context {
-  background-color: #d6e3e8;
+
   white-space: nowrap;
-  width: 1040px;
+  width: 1240px;
   margin-left: -120px;
 }
 
 .context {
   margin-top: 21px;
-  width: 170px;
+  width: 270px;
   font-size: 0.9em;
 }
 
@@ -170,12 +184,19 @@ button.button.grey:active {
 }
 
 .context-row {
-  border-bottom:  1px solid #c3ccdb;
   font-family: monospace;
-  padding-left: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #333;
+  color: #555;
+}
+
+#right-context .context-row {
+  margin-left: 10px;
+}
+
+#left-context .context-row {
+  text-align: right;
+  margin-left: 0px;
 }
 
 .context-row a {

@@ -1,21 +1,27 @@
 <html ng-app="entext">
   <head>
-    <title>Entext: Multi-pattern approximate search</title>
+    <title>Multi-pattern approximate search</title>
     <script src="lib/angular-1.5.8.min.js"></script>
     <script src="lib/angular-sanitize.js"></script>
     <script src="entext.js"></script>
     <link rel="stylesheet" href="entext.css"></link>
   </head>
   <body ng-controller="MainCtrl">
+
     <div id="content">
-      <div id="title"><a href="#">Entext</a>: Multi-pattern approximate search</div>
       <div class="row">
         <div class="left header">
           {{response.info.e}} <span class="info">({{response.info.patterns}})</span>
         </div>
+        <div class="left" id="status">alpha</div>
+
         <div class="right">
-          <button class="button" ng-click="start_create()">+ Create new dictionary</button>
+          <button class="button" ng-click="start_create()">+ New dictionary</button>
         </div>
+        <div class="right" style="padding:7px" ng-show="response.info.e!=='demo'">
+          <a href="#">Home</a>
+        </div>
+
 
         <div class="clear"></div>
       </div>
@@ -33,7 +39,7 @@
 
           <button ng-click="search()" class="button">Search</button>
           <span class="small">
-            Max distance:
+            Max error:
             <input type="radio" ng-model="k" name="k" value="0" id="k0"> <label for="k0">0</label>
             <input type="radio" ng-model="k" name="k" value="1" id="k1"> <label for="k1">1</label>
             <input type="radio" ng-model="k" name="k" value="2" id="k2"> <label for="k2">2</label>
@@ -41,9 +47,9 @@
 
         <div>
           <div class="verysmall">
-            Took: {{response.took}}
+            {{reference_hit_count}} hits. Took: {{response.took}}
             <span class="error">{{response.error}}</span><br>
-            
+
           </div>
         </div>
       </div>
