@@ -52,7 +52,7 @@ func (auto *Automata) FindAll(term string, maxDistance int) []Result {
 
 	initialState := CreateState([]*Position{CreatePosition(0, 0)})
 	pendingQueue := []*Intersection{CreateIntersection(auto.Dawg.Root, initialState, nil, 0)}
-
+	
 	for len(labels) > 0 || len(pendingQueue) > 0 {
 		if len(labels) > 0 {
 			dictionaryNode := intersection.Node

@@ -13,7 +13,7 @@ import (
 	 "net/http"
 	 "strings"
 	 "math/rand"
-
+	 "runtime"
 
 )
 
@@ -213,7 +213,7 @@ func (s Server) search(w http.ResponseWriter, r *http.Request) {
 	bytes := make([]byte, 1024 * 10)
 	reader.Read(bytes)
 
-	text := string(bytes)
+	text := "    " + string(bytes) + "    "
 
 	results := s.engine[engine].server.Search(text, k)
 
@@ -238,6 +238,11 @@ func (s Server) search(w http.ResponseWriter, r *http.Request) {
 func (s Server) removeInactive() {
 	for true {
 		time.Sleep(60 * time.Second)
+		var m runtime.MemStats
+		runtime.GC()
+		runtime.ReadMemStats(&m)
+		log.Print("Allocated memory: ", m.Alloc)
+
 		for key, engine := range s.engine {
 			if key == "demo" {
 				continue
@@ -267,7 +272,7 @@ func (s Server) Limit(h http.Handler) http.Handler {
 		ip := strings.Split(r.RemoteAddr, ":")[0]
 
 		if prev, ok := s.timeout[ip]; ok {
-			if time.Since(prev).Seconds() < 2.0 {
+			if time.Since(prev).Seconds() < 0.0001 {
 				s.timeout[ip] = start
 				s.log(r, "too frequent")
 

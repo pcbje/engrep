@@ -1,46 +1,11 @@
 package engrep
 
 import (
-	"bufio"
-	"os"
 	"reflect"
 	"sort"
 	"testing"
 )
 
-func BenchmarkCreate1(b *testing.B) {
-
-	for n := 0; n < b.N; n++ {
-		trie := CreateFuGrep(1, true, dawg.CreateDawg(1))
-		i := 0
-		file, _ := os.Open("../names2.txt")
-		scanner := bufio.NewScanner(file)
-		refs := []string{}
-		for scanner.Scan() {
-			refs = append(refs, scanner.Text())
-			i++
-			if i%100 == 0 {
-
-				break
-			}
-		}
-		file.Close()
-		trie.AddReferences(refs)
-	}
-}
-
-func BenchmarkSearch(b *testing.B) {
-	trie := CreateFuGrep(2, true, dawg.CreateDawg(2))
-	trie.AddReferences([]string{"01111010", "101100001"})
-
-	b.ResetTimer()
-
-	for n := 0; n < b.N; n++ {
-		trie.Scan("101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011101111010101011", func(start int, end int, p string, q string, d int) {
-
-		})
-	}
-}
 
 func RunTestR(t *testing.T, k int, patterns []string, probe string, expected []string, r int) {
 	minlength := 99
@@ -48,18 +13,18 @@ func RunTestR(t *testing.T, k int, patterns []string, probe string, expected []s
 	for _, p := range patterns {
 		if len(p) < minlength {
 			minlength = len(p)
-		}	
+		}
 	}
 
 	r = (minlength / 2) - 1
 
-	trie := CreateFuGrep(k, true, dawg.CreateDawg(k))
+	trie := CreateEngrep(k, true, CreateDawg(k))
 	trie.AddReferences(patterns)
 
 	cache := map[string]bool{}
 	actual := []string{}
 
-	trie.Scan(probe, func(s int, e int, str string, act string, d int) {
+	trie.Scan(probe, k, func(s int, e int, str string, pre string, suf string, d int) {
 		if _, ok := cache[str]; !ok {
 			actual = append(actual, str)
 			cache[str] = true
@@ -130,6 +95,10 @@ func Test0_11(t *testing.T) {
 // Fails if mis-excluding blues
 func Test0_12(t *testing.T) {
 	RunTest(t, 0, []string{"bcx", "cde"}, "bcde", []string{"cde"})
+}
+
+func TestBjelland(t *testing.T) {
+	RunTest(t, 2, []string{"Bjelland"}, "bjelland", []string{"cde"})
 }
 
 // Works only when we allow overlapping patterns.

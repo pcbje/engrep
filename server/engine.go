@@ -12,6 +12,7 @@ type Entry struct {
 	Reference string
 	Distance int
 	Info string
+	Offset int
 }
 
 type Server struct {
@@ -70,27 +71,42 @@ func (s Server) Search(text string, k int) []Entry {
 		"}":	true,
 		">":	true,
 		"<":	true,
+		"\x00":	true,
 	}
 
 	prev := ""
 	res := []Entry{}
 
-	s.engine.Scan(" "+text+" ", k, func(z int, e int, actual string, pre string, suf string, d int) {
+	s.engine.Scan(text, k, func(z int, e int, actual string, pre string, suf string, d int) {
 		actual = strings.TrimSpace(actual)
-		_, validPre := stop[pre]
-		_, validSuf := stop[suf]
+
+		validPre := len(pre) == 0
+		validSuf := len(suf) == 0
+
+		for _, s := range pre {
+				_, v := stop[string(s)]
+				validPre = validPre || v
+		}
+
+		for _, s := range suf {
+				_, v := stop[string(s)]
+				validSuf = validSuf || v
+		}
 
 		if !validPre || !validSuf {
+			//println(validPre, validSuf, len(suf), suf)
 			return
 		}
 
-		if actual != prev {
 
+
+		if actual != prev {
 			for _, found := range s.auto.FindAll(actual, k) {
 				entry := Entry{
 					Actual: actual,
 					Reference: found.Match,
 					Distance: found.Error,
+					Offset: z,
 					//Info: s.database[found.Match],
 				}
 
