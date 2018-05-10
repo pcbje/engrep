@@ -1,14 +1,14 @@
 package main
 
 import (
-  "os"
-  "./server"
-	"strconv"
+	"./server"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"encoding/json"
-	"io/ioutil"
-	"fmt"
+	"os"
+	"strconv"
 )
 
 func GetPatterns(path string) []string {
@@ -37,9 +37,9 @@ func main() {
 	names := GetPatterns(os.Args[2])
 	maxk, err := strconv.Atoi(os.Args[3])
 
-	f, err := os.OpenFile("engrep-app.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	f, err := os.OpenFile("engrep-app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-	    log.Fatalf("error opening file: %v", err)
+		log.Fatalf("error opening file: %v", err)
 	}
 	defer f.Close()
 

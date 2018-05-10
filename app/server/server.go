@@ -1,18 +1,16 @@
 package server
 
 import (
-	"fmt"
-
-	"strconv"
 	"bufio"
-
+	"encoding/json"
+	"fmt"
+	"log"
+	"math/rand"
+	"net/http"
+	"runtime"
+	"strconv"
+	"strings"
 	"time"
-	 "encoding/json"
-	 "log"
-	 "net/http"
-	 "strings"
-	 "math/rand"
-	 "runtime"
 )
 
 func init() {
@@ -29,25 +27,23 @@ func RandStringRunes(n int, letterRunes []rune) string {
 	return string(b)
 }
 
-
-
 type Dictionary struct {
-	server Engrep
-	last time.Time
+	server   Engrep
+	last     time.Time
 	patterns int
 }
 
 type Server struct {
-	maxk int
-	engine map[string]*Dictionary
+	maxk    int
+	engine  map[string]*Dictionary
 	timeout map[string]time.Time
 }
 
 type Response struct {
-	Results []Entry `json:"results"`
-	Took string `json:"took"`
-	Error string `json:"error"`
-	Patterns int `json:"patterns"`
+	Results  []Entry `json:"results"`
+	Took     string  `json:"took"`
+	Error    string  `json:"error"`
+	Patterns int     `json:"patterns"`
 }
 
 func (s Server) Create(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +53,7 @@ func (s Server) Create(w http.ResponseWriter, r *http.Request) {
 
 	max_patterns := 10000
 
-	bytes := make([]byte, max_patterns * 512)
+	bytes := make([]byte, max_patterns*512)
 	rr, _ := reader.Read(bytes)
 
 	err := json.Unmarshal(bytes[0:rr], &patterns)
@@ -135,11 +131,11 @@ func (s Server) Search(w http.ResponseWriter, r *http.Request) {
 
 	reader := bufio.NewReader(r.Body)
 
-	bytes := make([]byte, 1024 * 1024)
+	bytes := make([]byte, 1024*1024)
 
 	rr, _ := reader.Read(bytes)
 
-	bytes  = bytes[0:rr]
+	bytes = bytes[0:rr]
 
 	text := "        " + string(bytes) + "         "
 
@@ -149,9 +145,9 @@ func (s Server) Search(w http.ResponseWriter, r *http.Request) {
 	runtime.ReadMemStats(&m)
 
 	response := Response{
-		Results: results,
-		Error: "",
-		Took: fmt.Sprintf("%s", time.Since(start)),
+		Results:  results,
+		Error:    "",
+		Took:     fmt.Sprintf("%s", time.Since(start)),
 		Patterns: s.engine[engine].patterns,
 	}
 	jsonBytes, _ := json.MarshalIndent(response, "", "  ")
@@ -173,6 +169,7 @@ func (s Server) removeInactive() {
 		runtime.ReadMemStats(&m)
 		log.Print("Allocated memory: ", m.Alloc)
 
+		rem := 0
 		for key, engine := range s.engine {
 			if key == "demo" {
 				continue
@@ -182,7 +179,12 @@ func (s Server) removeInactive() {
 			if time.Since(engine.last).Seconds() > 60*60 {
 				delete(s.engine, key)
 				log.Print("Removed ", key)
+				rem++
 			}
+		}
+
+		if rem > 0 {
+			runtime.GC()
 		}
 	}
 }
@@ -207,7 +209,7 @@ func (s Server) Limit(h http.Handler) http.Handler {
 				s.log(r, "too frequent")
 
 				response := Response{
-					Took: fmt.Sprintf("%s", time.Since(start)),
+					Took:  fmt.Sprintf("%s", time.Since(start)),
 					Error: "Max one request per 2 seonds...",
 				}
 				jsonBytes, _ := json.MarshalIndent(response, "", "  ")
@@ -235,8 +237,8 @@ func NoCache(h http.Handler) http.Handler {
 
 func CreateServer(names []string, maxk int) Server {
 	s := Server{
-		engine: map[string]*Dictionary{"demo": &Dictionary{server: Build(names, maxk), patterns: len(names)}},
-		maxk: maxk,
+		engine:  map[string]*Dictionary{"demo": &Dictionary{server: Build(names, maxk), patterns: len(names)}},
+		maxk:    maxk,
 		timeout: map[string]time.Time{},
 	}
 

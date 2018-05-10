@@ -1,25 +1,24 @@
 package server
 
 import (
-	"../../engrep"
 	"../../automata"
-	 "sort"
-	 "strings"
+	"../../engrep"
+	"sort"
+	"strings"
 )
 
 type Engrep struct {
 	engine *engrep.Engrep
-	auto *automata.Automata
+	auto   *automata.Automata
 }
 
 type Entry struct {
-	Actual string
+	Actual    string
 	Reference string
-	Distance int
-	Info string
-	Offset int
+	Distance  int
+	Info      string
+	Offset    int
 }
-
 
 func Build(patterns []string, maxk int) Engrep {
 	sort.Strings(patterns)
@@ -32,30 +31,30 @@ func Build(patterns []string, maxk int) Engrep {
 
 	return Engrep{
 		engine: trie,
-		auto: auto,
+		auto:   auto,
 	}
 }
 
 func (s Engrep) Search(text string, k int) []Entry {
 	stop := map[string]bool{
-		".":	true,
-		",":	true,
-		"?":	true,
-		" ":	true,
-		"!":	true,
-		"\"":	true,
-		"'":	true,
-		"-":	true,
-		"#":	true,
-		"\n":	true,
-		"\r":	true,
-		"[":	true,
-		"]":	true,
-		"{":	true,
-		"}":	true,
-		">":	true,
-		"<":	true,
-		"\x00":	true,
+		".":    true,
+		",":    true,
+		"?":    true,
+		" ":    true,
+		"!":    true,
+		"\"":   true,
+		"'":    true,
+		"-":    true,
+		"#":    true,
+		"\n":   true,
+		"\r":   true,
+		"[":    true,
+		"]":    true,
+		"{":    true,
+		"}":    true,
+		">":    true,
+		"<":    true,
+		"\x00": true,
 	}
 
 	prev := ""
@@ -71,17 +70,21 @@ func (s Engrep) Search(text string, k int) []Entry {
 
 		if !validPre {
 			for _, s := range pre {
-					_, v := stop[string(s)]
-					validPre = validPre || v
-					if validPre {break}
+				_, v := stop[string(s)]
+				validPre = validPre || v
+				if validPre {
+					break
+				}
 			}
 		}
 
 		if !validSuf {
 			for _, s := range suf {
-					_, v := stop[string(s)]
-					validSuf = validSuf || v
-					if validSuf {break}
+				_, v := stop[string(s)]
+				validSuf = validSuf || v
+				if validSuf {
+					break
+				}
 			}
 		}
 
@@ -90,18 +93,16 @@ func (s Engrep) Search(text string, k int) []Entry {
 			return
 		}
 
-
-
 		if actual != prev {
 			if _, ok := cache[actual]; !ok {
 				x := []Entry{}
 
 				for _, found := range s.auto.FindAll([]rune(actual), k) {
 					x = append(x, Entry{
-						Actual: actual,
+						Actual:    actual,
 						Reference: found.Match,
-						Distance: found.Error,
-						Offset: z,
+						Distance:  found.Error,
+						Offset:    z,
 						//Info: s.database[found.Match],
 					})
 				}
