@@ -7,6 +7,7 @@
     <script src="lib/angular-sanitize.js"></script>
     <script src="entext.js"></script>
     <link rel="stylesheet" href="entext.css"></link>
+    <link rel="shortcut icon" href="entext.png">
   </head>
   <body ng-controller="MainCtrl">
     <div id="content">
@@ -29,7 +30,7 @@
         <div id="left-context" class="left context"></div>
         <div id="right-context" class="right context"></div>
         <div id="text"  class="text" contenteditable="true" ng-bind-html="api.search.vars.text"></div>
-      <div class="clear"></div>
+        <div class="clear"></div>
       </div>
       <div class="row">
         <div class="left">
@@ -46,16 +47,16 @@
             {{api.search.vars.hits}} hits. Took: {{api.search.vars.took}}
             <span class="error">{{response.error}}</span><br>
           </div>
-      </div>
-      <div class="right">
-        <div class="cmd">
-          $ curl https://entext.io/create?k=2 --data '["Humbug", "Zulu"]' <br/>
-          $ curl https://entext.io/search?d={{response.info.dictionary}}&k={{k}} --data "lorem ipsum..."
         </div>
+        <div class="right">
+          <div class="cmd">
+            $ curl https://entext.io/create?k=2 --data '["Humbug", "Zulu"]' <br/>
+            $ curl https://entext.io/search?d={{response.info.dictionary}}&k={{k}} --data "lorem ipsum..."
+          </div>
+        </div>
+        <div class="clear"></div>
       </div>
-      <div class="clear"></div>
     </div>
-  </div>
 
     <div id="create" class="w3-modal">
       <div class="w3-modal-content">
