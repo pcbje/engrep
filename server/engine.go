@@ -35,23 +35,6 @@ func Build(patterns []string, maxk int) Server {
 	}
 }
 
-func (s Server) SearchPattern(pattern string, k int) []Entry {
-	res := []Entry{}
-
-
-	for _, found := range s.auto.FindAll([]rune(pattern), k) {
-		entry := Entry{
-			Reference: found.Match,
-			Distance: found.Error,
-			//Info: s.database[found.Match],
-		}
-
-		res = append(res, entry)
-	}
-
-	return res
-}
-
 func (s Server) Search(text string, k int) []Entry {
 	stop := map[string]bool{
 		".":	true,

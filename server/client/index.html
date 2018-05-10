@@ -9,65 +9,62 @@
     <link rel="stylesheet" href="entext.css"></link>
   </head>
   <body ng-controller="MainCtrl">
-
     <div id="content">
       <div class="row">
         <div class="left header">
-          {{response.info.e}} <span class="info">({{response.info.patterns}})</span>
+          {{api.search.vars.dictionary}} <span class="info">({{api.search.vars.patterns}})</span>
         </div>
         <div class="left" id="status">alpha</div>
 
         <div class="right">
-          <button class="button" ng-click="start_create()">+ New dictionary</button>
+          <button class="button" ng-click="api.dictionary.start_create()">+ New dictionary</button>
         </div>
-        <div class="right" style="padding:7px" ng-show="response.info.e!=='demo'">
+        <div class="right" style="padding:7px" ng-show="api.search.vars.dictionary!=='demo'">
           <a href="#">Home</a>
         </div>
-
 
         <div class="clear"></div>
       </div>
       <div id="context">
         <div id="left-context" class="left context"></div>
         <div id="right-context" class="right context"></div>
-        <div id="text"  class="text" contenteditable="true" ng-bind-html="staging_text"></div>
-
+        <div id="text"  class="text" contenteditable="true" ng-bind-html="api.search.vars.text"></div>
       <div class="clear"></div>
       </div>
       <div class="row">
-          <div class="cmd">
-            $ curl https://entext.io/search?e={{response.info.e}}&k={{k}} --data "lorem ipsum..."
+        <div class="left">
+          <div>
+            <button ng-click="api.search.search()" class="button">Search</button>
+            <span class="small">
+              Max error:
+              <input type="radio" ng-model="api.search.vars.k" name="k" value="0" id="k0"> <label for="k0">0</label>
+              <input type="radio" ng-model="api.search.vars.k" name="k" value="1" id="k1"> <label for="k1">1</label>
+              <input type="radio" ng-model="api.search.vars.k" name="k" value="2" id="k2"> <label for="k2">2</label>
+            </span>
           </div>
-
-          <button ng-click="search()" class="button">Search</button>
-          <span class="small">
-            Max error:
-            <input type="radio" ng-model="k" name="k" value="0" id="k0"> <label for="k0">0</label>
-            <input type="radio" ng-model="k" name="k" value="1" id="k1"> <label for="k1">1</label>
-            <input type="radio" ng-model="k" name="k" value="2" id="k2"> <label for="k2">2</label>
-          </span>
-
-        <div>
           <div class="verysmall">
-            {{reference_hit_count}} hits. Took: {{response.took}}
+            {{api.search.vars.hits}} hits. Took: {{api.search.vars.took}}
             <span class="error">{{response.error}}</span><br>
-
           </div>
+      </div>
+      <div class="right">
+        <div class="cmd">
+          $ curl https://entext.io/create?k=2 --data '["Humbug", "Zulu"]' <br/>
+          $ curl https://entext.io/search?d={{response.info.dictionary}}&k={{k}} --data "lorem ipsum..."
         </div>
       </div>
+      <div class="clear"></div>
     </div>
+  </div>
 
     <div id="create" class="w3-modal">
       <div class="w3-modal-content">
-        <div class="header" style="margin:0 0 10px 0">Create dictionary ({{create_patterns.length}})</div>
-        <textarea ng-model="pattern_staging" placeholder="One pattern per line (max 10000 patterns and 512KB text)"></textarea>
-        <div class="cmd" style="margin-top:10px;">
-          $ curl https://entext.io/create?k=2 --data '["Humbug", "Zulu"]'
-        </div>
+        <div class="header" style="margin:0 0 10px 0">Create dictionary</div>
+        <textarea ng-model="api.dictionary.vars.patterns" placeholder="One pattern per line (max 10000 patterns and 512KB text)"></textarea>
         <div style="margin-top:10px;">
-          <button ng-click="create()" class="button">Create</button>
-          <button ng-click="cancel_create()" class="grey button">Cancel</button>
-          <span class="verysmall" style="padding-left:10px">{{create_message}}</span>
+          <button ng-click="api.dictionary.create()" class="button">Create</button>
+          <button ng-click="api.dictionary.terminate_create()" class="grey button">Cancel</button>
+          <span class="verysmall" style="padding-left:10px">{{api.dictionary.vars.message}}</span>
         </div>
       </div>
     </div>

@@ -34,6 +34,7 @@ button.button {
   outline: none;
   border-radius: 1px;
   font-size: 0.9em;
+  box-shadow: 0 0 2px rgba(0,0,0,.4);
 }
 
 
@@ -114,14 +115,13 @@ button.button.grey:active {
 .cmd {
   font-family: monospace;
   padding-left: 2px;
-  margin-bottom: 10px;
   font-size: 0.9em;
-  display: none;
+  color: #888;
 }
 
 
 .text:hover {
-  border: 1px solid #648cb3;
+  border: 1px solid #a5c5e5;
 }
 
 .text {

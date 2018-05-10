@@ -67,7 +67,7 @@ type Response struct {
 	Results []server.Entry `json:"results"`
 	Took string `json:"took"`
 	Error string `json:"error"`
-	Info map[string]interface{} `json:"info"`
+	Patterns int `json:"patterns"`
 }
 
 func (s Server) create(w http.ResponseWriter, r *http.Request) {
@@ -91,12 +91,12 @@ func (s Server) create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	letters := []rune("abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-	key := RandStringRunes(16, letters)
 
-	_, ok := s.engine[key]
+	ok := true
+	key := ""
 
 	for ok {
-		key = RandStringRunes(16, letters)
+		key = RandStringRunes(8, letters)
 		_, ok = s.engine[key]
 	}
 
@@ -124,63 +124,10 @@ func (s Server) log(r *http.Request, message string) {
 	log.Print(fmt.Sprintf("[%s] %s", ip, message))
 }
 
-func (s Server) searchPattern(w http.ResponseWriter, r *http.Request) {
-	start := time.Now()
-
-	engine := r.URL.Query().Get("e")
-
-	if engine == "" {
-		engine = "demo"
-	}
-
-	if _, ok := s.engine[engine]; !ok {
-		log.Panic("not found")
-	}
-
-	kstr := r.URL.Query().Get("k")
-
-	k := 99
-	if kstr == "" {
-		k = s.maxk
-	}
-	k, err := strconv.Atoi(kstr)
-
-
-
-	if err != nil {
-		log.Panic("k is not a number")
-	}
-
-	if k > s.maxk {
-		log.Panic("k is bigger than ", s.maxk)
-	}
-
-	pattern := r.URL.Query().Get("p")
-
-	if len(pattern) == 0 {
-		log.Panic("pattern not provided")
-	}
-
-	results := s.engine[engine].server.SearchPattern(pattern, k)
-
-	response := Response{
-		Results: results,
-		Error: "",
-		Took: fmt.Sprintf("%s", time.Since(start)),
-	}
-	jsonBytes, _ := json.MarshalIndent(response, "", "  ")
-
-	s.engine[engine].last = start
-
-	s.log(r, fmt.Sprintf("searched pattern. engine: %s, k: %s, patterns: %d, len: %d took: %s", engine, kstr, s.engine[engine].patterns, len(pattern), time.Since(start)))
-
-	fmt.Fprintf(w, string(jsonBytes))
-}
-
 func (s Server) search(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
-	engine := r.URL.Query().Get("e")
+	engine := r.URL.Query().Get("d")
 
 	if engine == "" {
 		engine = "demo"
@@ -225,11 +172,7 @@ func (s Server) search(w http.ResponseWriter, r *http.Request) {
 		Results: results,
 		Error: "",
 		Took: fmt.Sprintf("%s", time.Since(start)),
-		Info: map[string]interface{}{
-			"e": engine,
-			"patterns": s.engine[engine].patterns,
-			//"allocated_gb": float64(m.Alloc) / (1024.0*1024.0*1024.0),
-		},
+		Patterns: s.engine[engine].patterns,
 	}
 	jsonBytes, _ := json.MarshalIndent(response, "", "  ")
 
@@ -334,7 +277,6 @@ func main() {
 	}
 
 	http.Handle("/search", s.Limit(http.HandlerFunc(s.search)))
-	http.Handle("/pattern", s.Limit(http.HandlerFunc(s.searchPattern)))
 	http.Handle("/create", s.Limit(http.HandlerFunc(s.create)))
 	http.Handle("/", NoCache(http.FileServer(http.Dir("./server/client"))))
 
