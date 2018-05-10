@@ -122,7 +122,7 @@ $scope.search = function(preserve) {
     var pr = null
 
     $scope.response.results.map(function(result, i) {
-      if (Math.abs(result.Offset - po) < result.Actual.length) {
+      if (Math.abs(result.Offset - po) <= $scope.k) {
         return;
       }
 
@@ -130,7 +130,10 @@ $scope.search = function(preserve) {
 
       po = result.Offset;
       pr = result.Reference;
-      var regex = new RegExp(result.Actual, "g")
+
+      var prep = new RegExp(" ", "g")
+      var actual = result.Actual.replace(prep, "( |</span>)*")      
+      var regex = new RegExp(actual, "g")
       var id = "hit-" + i;
       staging_text = staging_text.replace(regex, "<span class='yellow-" + result.Distance + "' id='" + id + "'>" + result.Actual +"</span>")
       refs.push({id: id, reference: result.Reference, distance: result.Distance})
@@ -199,7 +202,7 @@ $scope.search = function(preserve) {
     if ($scope.response.info.e == 'demo') {
       $scope.text = "Hi there!\n\nThis is a simple demo application of an algorithm for multi-pattern approximate search. It lets you search full text for known patterns like names and organiztions, with errors (insert, edit, delete and transpose).\n\nFor example, Vasili Pushkin may be a different transliteration of Vasily Pushkin the poet, and Ryen Renolds may just be lazy writing. Think of it as a combination of Aho-Corasick and Levenshtein automata, although that's not quite how it works. "
        + "A research paper on the algorithm is currently in peer-review, and we will publish more details later.\n\nThis demo searches for " + $scope.response.info.patterns + " names collected from Wikipedia, but you can create your own dictionary by clicking the button in the top right corner. The application searches for whatever is in this white box, so <b>click here to edit</b> and tap 'search' below!\n\n"
-       + "Nothing you send will be stored on disk, and inactive dictionaries will be discarded. However, we do gather some metrics to measure performance. We make no guarantee of availability, confidentiality, or anything else. We'd appreciate your feedback and bug reports!\n\nQuestions or comments? Get in touch! <a href=\"mailto:demo@entext.io\">demo@entext.io";
+       + "Nothing you send will be stored on disk, and inactive dictionaries will be discarded. However, we do gather some metrics to measure performance. We make no guarantee of availability, confidentiality, or anything else.\n\nQuestions or comments? Get in touch! <a href=\"mailto:demo@entext.io\">demo@entext.io";
      } else {
        $scope.text = '';
      }
