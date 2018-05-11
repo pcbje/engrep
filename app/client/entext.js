@@ -1,5 +1,7 @@
+'use strict';
 
-var modules = angular.module('modules', [])
+var modules = angular.module('modules', []);
+var app = angular.module('entext', ['ngSanitize', 'modules']);
 
 modules.service('api', function() {
     return {}
@@ -8,9 +10,12 @@ modules.service('api', function() {
 modules.service('search', function($rootScope, $sce, $sanitize, $http, $location, api) {
   var timeout;
   var e;
+  var random = ['Leonard Riickhard', 'Pabl Picasso', 'Leonardo da-Vinci', 'Bjarne Melgård']
   var intro = "Hi there!\n\nThis is a simple demo application of an algorithm for multi-pattern approximate search. It lets you search full text for known patterns like names and organiztions, with errors (insert, edit, delete and transpose).\n\nFor example, Vasili Pushkin may be a different transliteration of Vasily Pushkin the poet, and Ryen Renolds may just be lazy writing. Think of it as a combination of Aho-Corasick and Levenshtein automata, although that's not quite how it works. "
-     + "A research paper on the algorithm is currently in peer-review, and we will publish more details later.\n\nThis demo searches for a large number of names collected from Wikipedia, but you can create your own dictionary by clicking the button in the top right corner. The application searches for whatever is in this white box, so <b>click here to edit</b> and tap 'search' below!\n\n"
-     + "Nothing you send will be stored on disk, and inactive dictionaries will be discarded. However, we do gather some metrics to measure performance.\n\nQuestions or comments? Get in touch! <a href=\"mailto:demo@entext.io\">demo@entext.io";
+     + "We will publish more details later.\n\nThis demo searches for 539365 names collected from Wikipedia, but you can create your own dictionary by clicking the button in the top right corner. The application searches for whatever is in this white box, so <b>click here to edit</b> and then hit 'search' below!\n\n"
+     + "Nothing you send will be stored on disk, and inactive dictionaries will be discarded. However, we do gather some metrics to measure performance.\n\nQuestions or comments? Get in touch! <a href=\"mailto:demo@entext.io\">demo@entext.io</a>\n\n";
+
+  intro += random[Math.floor(Math.random()*random.length)]
 
   document.getElementById('text').innerHTML = intro;
 
@@ -102,13 +107,14 @@ modules.service('search', function($rootScope, $sce, $sanitize, $http, $location
           var cache = {'left': {}, 'right': {}}
 
           refs.map(function(ref) {
-            elem = document.getElementById(ref.id)
+            var elem = document.getElementById(ref.id)
             if (!elem) return
-            rect = elem.getBoundingClientRect();
-            pos =  window.scrollY + rect.top;
-            left = rect.left < document.documentElement.clientWidth / 2
+            var rect = elem.getBoundingClientRect();
+            var pos =  window.scrollY + rect.top;
+            var left = rect.left < document.documentElement.clientWidth / 2
 
-            side = left ? 'left' : 'right'
+            var side = left ? 'left' : 'right'
+            var container = document.getElementById(side + '-context');
 
             if (cache[side][pos] == undefined) {
               e = angular.element('<div class="context-row"></div>');
@@ -116,7 +122,6 @@ modules.service('search', function($rootScope, $sce, $sanitize, $http, $location
 
               e[0].setAttribute('style', 'position:absolute;top:' + pos + 'px;width:160px;');
               e[0].setAttribute('title', ref.reference);
-              container = document.getElementById(side + '-context');
               container.appendChild(e[0])
               cache[side][pos] = e
             } else {
@@ -181,9 +186,7 @@ modules.service('dictionary', function($location, $http, api) {
   }
 })
 
-var mod = angular.module('entext', ['ngSanitize', 'modules']);
-
-mod.controller('MainCtrl', function($scope, api, dictionary, search) {
+app.controller('MainCtrl', function($scope, api, dictionary, search) {
   $scope.api = api;
 
   $scope.$watch("api.search.vars.k", function() {
