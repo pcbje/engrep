@@ -45,7 +45,8 @@
           </div>
           <div class="verysmall">
             {{api.search.vars.hits}} hits. Took: {{api.search.vars.took}}
-            <span class="error">{{response.error}}</span><br>
+            {{api.search.vars.message}}
+            <span class="error">{{api.search.vars.error}}</span><br>
           </div>
         </div>
         <div class="right">

@@ -44,6 +44,8 @@ modules.service('search', function($rootScope, $sce, $sanitize, $http, $location
       patterns: 0,
       hits: 0,
       took: 0.0,
+      message: '',
+      error: '',
     },
     clear: function() {
       document.getElementById('left-context').innerHTML = '';
@@ -52,14 +54,19 @@ modules.service('search', function($rootScope, $sce, $sanitize, $http, $location
       api.search.vars.text = document.getElementById('text').innerHTML;
       api.search.vars.text = api.search.vars.text.replace(regex1, "");
       api.search.vars.text = api.search.vars.text.replace(regex2, "");
+      api.search.vars.error = '';
     },
     search: function() {
       api.search.clear();
+
+      api.search.vars.message = 'searching...';
 
       $http.post('search?d=' +  api.search.vars.dictionary + '&k=' + api.search.vars.k, api.search.vars.text).then(function(res) {
         var refs = [];
 
         api.search.vars.hits = 0;
+
+        api.search.vars.message = '';
 
         var response = res.data;
 
@@ -128,6 +135,9 @@ modules.service('search', function($rootScope, $sce, $sanitize, $http, $location
             }
           })
         });
+      }, function(res) {
+        api.search.vars.error = 'An error occured: ' + res.data;
+        api.search.vars.message = '';
       })
     }
   }
