@@ -12,7 +12,7 @@ modules.service('search', function($rootScope, $sce, $sanitize, $http, $location
   var e;
   var random = ['Leonard Riickhard', 'Pabl Picasso', 'Leonardo da-Vinci', 'Bjarne Melgård']
   var intro = "Hi there!\n\nThis is a simple demo application of an algorithm for multi-pattern approximate search. It lets you search full text for known patterns like names and organiztions, with errors (insert, edit, delete and transpose).\n\nFor example, Vasili Pushkin may be a different transliteration of Vasily Pushkin the poet, and Ryen Renolds may just be lazy writing. Think of it as a combination of Aho-Corasick and Levenshtein automata, although that's not quite how it works. "
-     + "We will publish more details later.\n\nThis demo searches for 539364 names collected from Wikipedia, but you can create your own dictionary by clicking the button in the top right corner. The application searches for whatever is in this white box, so <b>click here to edit</b> and then hit 'search' below!\n\n"
+     + "We are working on a research paper for this algorithm, and will publish more details later.\n\nThis demo searches for 539364 names collected from Wikipedia, but you can create your own dictionary by clicking the button in the top right corner. The application searches for whatever is in this white box, so <b>click here to edit</b> and then hit 'search' below!\n\n"
      + "Nothing you send will be stored on disk, and inactive dictionaries will be discarded. However, we do gather some metrics to measure performance.\n\nQuestions or comments? Get in touch! <a href=\"mailto:demo@entext.io\">demo@entext.io</a>\n\n";
 
   intro += random[Math.floor(Math.random()*random.length)]
