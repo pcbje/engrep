@@ -1,0 +1,222 @@
+* {
+  font-family: Helvetica,Arial,Lucida Grande,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  font-size: 13px;
+}
+
+html, body {
+  background-color: #fafafa;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+	color: #3f51b5;
+	font-weight: 100;
+	text-decoration: none;
+}
+
+button.button {
+  background-color: #4f60c1;
+  color: #fff;
+  border: 0;
+  padding: 7px 12px 7px 9px;
+  outline: none;
+  border-radius: 1px;
+  font-size: 0.9em;
+  box-shadow: 0 0 2px rgba(0,0,0,.4);
+}
+
+
+button.button * {
+  vertical-align: top;
+}
+
+button.button:active {
+    transform: translateY(1px);
+    background-color: #3f51b5;
+}
+
+button.button.grey {
+  background-color: #eee;
+  color: #666;
+}
+
+button.button.grey:active {
+  background-color: #ddd;
+}
+
+#tap {
+  position: absolute;
+  margin-left: -110px;
+  margin-top: 28px;
+}
+
+.left {
+  float:left;
+}
+
+.header {
+  margin-top: 5px;
+  font-size: 1.2em;
+}
+
+.right {
+  float:right;
+}
+
+.clear {
+  clear:both;
+}
+.small {
+  font-size: 0.9em;
+  margin-left:10px;
+}
+
+.verysmall {
+  font-size: 0.8em;
+  margin-top: 10px;
+  color: #888;
+}
+
+#status {
+  padding: 7px;
+  color: red;
+  font-weight: bold;
+}
+
+.error {
+  color: red;
+}
+
+.row {
+  width: 94%;
+  margin: 0 auto;
+}
+
+#content {
+  max-width: 98%;
+  text-align: left;
+  margin: 10px auto;
+}
+
+.cmd {
+  display:none;
+}
+
+
+.text:hover {
+  border: 1px solid #a5c5e5;
+}
+
+.text {
+    font-size: 1em;
+    cursor: default;
+    margin: 10px;
+    padding: 20px;
+    border: 1px solid transparent;
+    background-color: #fefefe;
+    box-shadow: 0 0 10px rgba(0,0,0,.3);
+    display: block;
+    unicode-bidi: embed;
+    font-family: monospace;
+    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+    white-space: -pre-wrap; /* Opera */
+    white-space: -o-pre-wrap; /* Opera */
+    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+    word-wrap: break-word; /* IE 5.5+ */
+}
+
+.text * {
+  font-family: monospace;
+  font-size: 13px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: auto !important;
+  text-align: left !important;
+}
+
+#context {
+
+
+}
+
+.context {
+  display: none;
+}
+
+.info {
+  color: #666;
+}
+
+.yellow-0 {
+  background-color: yellow;
+}
+
+.yellow-1 {
+  background-color: #faff91;
+}
+
+.yellow-2 {
+  background-color: #faffd1;
+}
+
+.context-row {
+  font-family: monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #555;
+}
+
+#right-context .context-row {
+  margin-left: 10px;
+}
+
+#left-context .context-row {
+  text-align: right;
+  margin-left: 0px;
+}
+
+.context-row a {
+    font-family: monospace;
+    font-size: 1em;
+}
+
+#title {
+  font-size: 1.3em;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.w3-modal{
+  z-index:3;
+  display:none;
+  padding-top:60px;
+  position:fixed;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  overflow:auto;
+  background-color:rgb(0,0,0);
+  background-color:rgba(0,0,0,0.3)
+}
+
+.w3-modal-content {
+  margin:auto;
+  background-color:#fff;
+  position:relative;
+  padding:0;
+  outline:0;
+  width:90%;
+  box-shadow: 0 0 5px rgba(0,0,0,.2);
+  padding: 10px;
+}
+
+textarea {
+  width:96%;
+  height: 240px;
+  font-size: 0.9em;
+  resize: none;
+}
