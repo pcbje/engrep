@@ -47,19 +47,25 @@ type Response struct {
 }
 
 func (s Server) Create(w http.ResponseWriter, r *http.Request) {
-	var patterns []string
+  var patterns []string
 
 	reader := bufio.NewReader(r.Body)
 
 	max_patterns := 10000
 
-	bytes := make([]byte, max_patterns*512)
+	bytes := make([]byte, max_patterns*64)
 	rr, _ := reader.Read(bytes)
 
-	err := json.Unmarshal(bytes[0:rr], &patterns)
+  raw_patterns := strings.Split(string(bytes[0:rr]), "\n")
 
-	if err != nil {
-		log.Panic("Could not decode json object:", err)
+  for _, pattern := range raw_patterns {
+    if len(strings.TrimSpace(pattern)) > 0 {
+      patterns = append(patterns, pattern)
+    }
+  }
+
+	if len(patterns) == 0 {
+		log.Panic("Min 1 pattern")
 	}
 
 	if len(patterns) > max_patterns {
@@ -195,7 +201,7 @@ func (s Server) Limit(h http.Handler) http.Handler {
 			recovered := recover()
 			if recovered != nil {
 				fmt.Println("Error:", recovered)
-				http.Error(w, fmt.Sprintf("Aaaaaaaargh (%v)", recovered), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("Argh: %v", recovered), http.StatusInternalServerError)
 			}
 		}()
 

@@ -160,7 +160,6 @@ modules.service('dictionary', function($location, $http, api) {
       api.dictionary.vars.patterns = '';
     },
     create: function() {
-      var patterns = [];
       var pattern_string = api.dictionary.vars.patterns;
 
       if (pattern_string.length > 1025*512) {
@@ -168,23 +167,14 @@ modules.service('dictionary', function($location, $http, api) {
           return
       }
 
-      if (pattern_string.length > 0) {
-          patterns = pattern_string.split('\n');
-      }
-
-      if (patterns.length > 10000) {
-          api.dictionary.vars.message = "Too many patterns";
-          return
-      }
-
-      if (patterns.length == 0) {
+      if (pattern_string.length == 0) {
           api.dictionary.vars.message = "No patterns";
           return
       }
 
       api.dictionary.vars.message = "Creating...";
 
-      $http.post('create?k=2', patterns).then(function(res) {
+      $http.post('create?k=2', pattern_string).then(function(res) {
         $location.path(res.data);
         api.dictionary.terminate_create();
         api.search.search();
