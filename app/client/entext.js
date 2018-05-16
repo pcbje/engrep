@@ -175,10 +175,13 @@ modules.service('dictionary', function($location, $http, api) {
 
       api.dictionary.vars.message = "Creating...";
 
-      $http.post('create?k=2', pattern_string).then(function(res) {        
+      $http.post('create?k=2', pattern_string).then(function(res) {
         $location.path(res.data);
-        api.dictionary.terminate_create();
-        api.search.search();
+        setTimeout(function() {
+          api.dictionary.terminate_create();
+          api.search.search();
+          $scope.$apply();
+        })
       })
     }
   }
