@@ -171,7 +171,7 @@ func (s Server) removeInactive() {
 	for true {
 		time.Sleep(60 * time.Second)
 		var m runtime.MemStats
-		runtime.GC()
+		//runtime.GC()
 		runtime.ReadMemStats(&m)
 		log.Print("Allocated memory: ", m.Alloc)
 
