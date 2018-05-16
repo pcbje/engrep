@@ -201,5 +201,6 @@ app.controller('MainCtrl', function($scope, api, dictionary, search) {
 
   setTimeout(function() {
     api.search.search();
+    $scope.$apply();
   })
 });
