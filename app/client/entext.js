@@ -55,6 +55,7 @@ modules.service('search', function($rootScope, $sce, $sanitize, $http, $location
       api.search.vars.text = api.search.vars.text.replace(regex1, "");
       api.search.vars.text = api.search.vars.text.replace(regex2, "");
       api.search.vars.error = '';
+      api.search.vars.patterns = '?';
     },
     search: function() {
       api.search.clear();
@@ -174,7 +175,7 @@ modules.service('dictionary', function($location, $http, api) {
 
       api.dictionary.vars.message = "Creating...";
 
-      $http.post('create?k=2', pattern_string).then(function(res) {
+      $http.post('create?k=2', pattern_string).then(function(res) {        
         $location.path(res.data);
         api.dictionary.terminate_create();
         api.search.search();
