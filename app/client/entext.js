@@ -190,7 +190,16 @@ modules.service('dictionary', function($location, $http, api) {
 app.controller('MainCtrl', function($scope, api, dictionary, search) {
   $scope.api = api;
 
+  var first = true;
+
   $scope.$watch("api.search.vars.k", function() {
-   api.search.search();
+    if (!first) {
+      api.search.search();
+      first = false;
+    }
   });
+
+  setTimeout(function() {
+    api.search.search();
+  })
 });
