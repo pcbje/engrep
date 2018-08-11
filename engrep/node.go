@@ -12,7 +12,6 @@ type Node struct {
 	Suffix     []rune
 	char       rune
 	Cost       int
-	parent     *Node
 	Remaining  int
 }
 
@@ -65,7 +64,6 @@ func (n *Node) Split(i int) (rune, *Node) {
 
 	n.Suffix = []rune{}
 	n.Edges = map[rune]*Node{char: next}
-	next.parent = n
 
 	return char, next
 }
@@ -75,25 +73,6 @@ func (n *Node) Explore() {
 		n.ExploreRec(reference.RemainingError, reference.Node, 0)
 	}
 
-	//n.References = nil
-}
-
-func (n *Node) Backtrack() []string {
-	references := []string{}
-	for _, reference := range n.References {
-		ref := ""
-		node := reference.Node
-		if !node.Final {
-			continue
-		}
-		for node != nil {
-			ref = string(node.char) + ref
-			node = node.parent
-		}
-		references = append(references, ref)
-	}
-
-	return references
 	//n.References = nil
 }
 
@@ -110,9 +89,6 @@ func (n *Node) AddEdge(char rune, target *Node) {
 	n.frontier = false
 
 	n.Edges[char] = target
-
-	target.parent = n
-
 }
 
 func (n *Node) SetFinal() {
